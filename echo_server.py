@@ -19,9 +19,7 @@ def recv_msg(clientSocket):
     try:
         client_details = clientSocket.recv(1024).decode('utf-8')
         recv_details = json.loads(client_details)
-        # print(recv_details)
         if recv_details['cmd'] == '1':
-            # client_details = json.loads(client_details)
             user_list = []
             for i in client_sockets_list:
                 user_list.append(i['Username'])
@@ -46,9 +44,9 @@ def recv_msg(clientSocket):
         elif recv_details['cmd'] == '3':
             user = recv_details['user']
             msg_list = []
-            for i,v in enumerate(msgs):
-                if user in v.values():
-                    msg_list.append(v['msg'])
+            for i in msgs:
+                if i['to'] == user:
+                    msg_list.append(i['msg'])
             print(f"Sent back {user} message!")
             clientSocket.send(json.dumps({'msg': msg_list}).encode('utf-8'))
         return True
@@ -76,6 +74,4 @@ while True:
             if msg is False:
                 sockets_list.remove(each_socket)
                 continue
-
-
-
+            
