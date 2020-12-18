@@ -4,6 +4,7 @@ import json
 
 serverPort = 8000
 serverId = "127.0.0.1"
+# storing client users in client_sockets_list
 client_sockets_list = []
 msgs = []
 serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
@@ -11,6 +12,8 @@ serverSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 serverSocket.bind((serverId, serverPort)) 
 serverSocket.listen()
 sockets_list=[serverSocket]
+# static userList
+static_userlist = ["Alice", "Bob"]
 print(f"Server Started! \nListen on {serverId}:{serverPort}")
 
 def recv_msg(clientSocket):
@@ -19,11 +22,18 @@ def recv_msg(clientSocket):
         recv_details = json.loads(client_details)
         # to get user list
         if recv_details['cmd'] == '1':
-            user_list = []
-            for i in client_sockets_list:
-                user_list.append(i['Username'])
-            user_json_list = json.dumps({'msg': user_list})
+            # for active user list ----------------------------------
+            # user_list = []
+            # for i in client_sockets_list:
+            #     user_list.append(i['Username'])
+            # user_json_list = json.dumps({'msg': user_list})
+            # clientSocket.send(user_json_list.encode('utf-8'))
+            # -------------------------------------------------------
+            
+            # for static user list ----------------------------------
+            user_json_list = json.dumps({'msg': static_userlist})
             clientSocket.send(user_json_list.encode('utf-8'))
+            # -------------------------------------------------------
             print('Returned user list.')
         #for sending a message
         elif recv_details['cmd'] == '2':
@@ -52,7 +62,6 @@ def recv_msg(clientSocket):
             print(f"Sent back {user} message!")
             clientSocket.send(json.dumps({'msg': msg_list}).encode('utf-8'))
         return True
-
     except:
         return False
 
@@ -64,13 +73,12 @@ while True:
             clientSocket, clientAddr = serverSocket.accept()
             client_details = clientSocket.recv(1024).decode('utf-8')
             client_user = json.loads(client_details)
+            # adding user to the lsit
             client_sockets_list.append(client_user)
             clientSocket.send(client_details.encode('utf-8'))
             for i in client_user:
                 print(f"Login {i} is {client_user[i]}")
-
             sockets_list.append(clientSocket)
-        
         else:
             msg = recv_msg(each_socket)
             if msg is False:
