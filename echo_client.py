@@ -129,7 +129,6 @@ def chat_with_frnd():
     serverIp = input("Enter your friend's IP: ")
     serverPort = input("Enter your friend's port number: ")
 
-
     clientSocket = socket.socket()
     clientSocket.connect((serverIp,int(serverPort)))
     clientSocket.send(username.encode('utf-8'))
@@ -154,8 +153,6 @@ def chat_with_frnd():
             break
         print(recv_text)
 
-
-
 while True:
     user_input = initial()
     if user_input == '0':
@@ -173,6 +170,3 @@ while True:
     else:
         print("Invalid Output")
         end_of_line()
-
-
-
