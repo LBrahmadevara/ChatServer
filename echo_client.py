@@ -100,7 +100,7 @@ def initiate_chat():
                     client_socket.send('bye'.encode('utf-8'))
                     sockets_list.remove(client_socket)
                     break
-                text_str = username+" "+text
+                text_str = username+": "+text
                 client_socket.send(text_str.encode('utf-8'))
         if len(sockets_list) == 1:
             client_socket.close()

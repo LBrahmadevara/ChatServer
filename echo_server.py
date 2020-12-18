@@ -12,6 +12,7 @@ serverSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 serverSocket.bind((serverId, serverPort)) 
 serverSocket.listen()
 sockets_list=[serverSocket]
+client_count = 0
 # using static user list
 static_userlist = ["Alice", "Bob"]
 print(f"Server Started! \nListen on {serverId}:{serverPort}")
@@ -69,6 +70,8 @@ while True:
     read_sockets, _, exception_sockets = select.select(sockets_list, [], sockets_list)
     for each_socket in read_sockets:
         if each_socket == serverSocket:
+            client_count = client_count + 1
+            print(f"client {client_count} connected.")
             clientSocket, clientAddr = serverSocket.accept()
             client_details = clientSocket.recv(1024).decode('utf-8')
             client_user = json.loads(client_details)
