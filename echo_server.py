@@ -6,8 +6,6 @@ serverPort = 8000
 serverId = "127.0.0.1"
 client_sockets_list = []
 msgs = []
-
-y = [{'a':'c','b':'l'},{'q':'e','t':'p'}]
 serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
 serverSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 serverSocket.bind((serverId, serverPort)) 
@@ -19,6 +17,7 @@ def recv_msg(clientSocket):
     try:
         client_details = clientSocket.recv(1024).decode('utf-8')
         recv_details = json.loads(client_details)
+        # to get user list
         if recv_details['cmd'] == '1':
             user_list = []
             for i in client_sockets_list:
@@ -26,12 +25,14 @@ def recv_msg(clientSocket):
             user_json_list = json.dumps({'msg': user_list})
             clientSocket.send(user_json_list.encode('utf-8'))
             print('Returned user list.')
+        #for sending a message
         elif recv_details['cmd'] == '2':
             del recv_details['cmd']
             msgs.append(recv_details)
             clientSocket.send('true'.encode('utf-8'))
             print(f"A message to {recv_details['to']}")
             print(f"Message: \n{recv_details['msg']}")
+        # for chating with a friend
         elif recv_details['cmd'] == '4':
             user = recv_details['user']
             for i,v in enumerate(client_sockets_list):
@@ -41,6 +42,7 @@ def recv_msg(clientSocket):
             sockets_list.remove(clientSocket)
             clientSocket.close()
             print('Client disconnected!')
+        # for getting messages
         elif recv_details['cmd'] == '3':
             user = recv_details['user']
             msg_list = []
